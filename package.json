@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@openrouter/sdk": "^0.12.24",
-    "ai": "^5.0.36",
-    "ioredis": "^5.10.1"
+    "ai": "^5.0.36"
   }
 }

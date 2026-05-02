@@ -1,40 +1,25 @@
-import { getRedisClient } from "../lib/redis";
-
-export const QUARANTINE_KEY = "models:quarantine";
-
-interface QuarantinedModel {
-  modelName: string;
-  expiresAt: number;
-}
+// In-memory quarantine cache: Map<modelName, expiresAt>
+const quarantineCache = new Map<string, number>();
 
 export const quarantineModel = async (model: string) => {
-  if (!process.env.REDIS_URL) return; // Skip if Redis not configured
-  const payload: QuarantinedModel = {
-    modelName: model,
-    expiresAt: Date.now() + Number(process.env.MODEL_QUARANTINE_MS) || 120_000,
-  };
-  await getRedisClient().sadd(QUARANTINE_KEY, JSON.stringify(payload));
+  const expiresAt = Date.now() + (Number(process.env.MODEL_QUARANTINE_MS) || 120_000);
+  quarantineCache.set(model, expiresAt);
+  console.log(`Quarantined ${model} until ${new Date(expiresAt).toISOString()}`);
 };
 
 export const getAndRefreshQuarantinedModels = async (): Promise<
-  Map<string, QuarantinedModel>
+  Map<string, number>
 > => {
-  if (!process.env.REDIS_URL) return new Map(); // Skip if Redis not configured
-  
-  const members = await getRedisClient().smembers(QUARANTINE_KEY);
   const now = Date.now();
-  const stillLockedModels: Map<string, QuarantinedModel> = new Map();
-  const pipeline = getRedisClient().pipeline();
+  const stillQuarantined = new Map<string, number>();
 
-  for (const member of members) {
-    const payload: QuarantinedModel = JSON.parse(member);
-    if (payload.expiresAt > now) {
-      stillLockedModels.set(payload.modelName, payload);
+  for (const [model, expiresAt] of quarantineCache.entries()) {
+    if (expiresAt > now) {
+      stillQuarantined.set(model, expiresAt);
     } else {
-      pipeline.srem(QUARANTINE_KEY, member);
+      quarantineCache.delete(model);
     }
   }
 
-  await pipeline.exec();
-  return stillLockedModels;
+  return stillQuarantined;
 };
