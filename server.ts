@@ -30,7 +30,8 @@ async function readRequestBody(request: import("node:http").IncomingMessage) {
 const server = createServer(async (request, response) => {
   try {
     if (request.url === "/health" && request.method === "GET") {
-      sendJson(response, 200, { ok: true });
+      response.writeHead(200);
+      response.end();
       return;
     }
 
