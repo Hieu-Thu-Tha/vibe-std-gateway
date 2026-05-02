@@ -1,0 +1,21 @@
+{
+  "name": "vibe-std-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev:vercel": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "dotenv": "^17.4.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@openrouter/sdk": "^0.12.24",
+    "ai": "^5.0.36",
+    "ioredis": "^5.10.1"
+  }
+}
