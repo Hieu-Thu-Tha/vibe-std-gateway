@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev:vercel": "vercel dev",
-    "deploy": "vercel --prod"
+    "dev": "tsx watch server.ts",
+    "start": "tsx server.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "dotenv": "^17.4.2",
+    "tsx": "^4.20.5",
     "typescript": "^6.0.3"
   },
   "dependencies": {

@@ -1,52 +1,44 @@
 # vibe-std-gateway
 
-Serverless gateway functions for AI providers.
+Bare-bones Node HTTP gateway for AI providers.
 
 ## Setup
 
-1. Install Vercel CLI:
+1. Install dependencies:
 
 ```sh
-npm i -g vercel
+npm install
 ```
 
-2. Add Vercel Skills (for agents):
-
-```sh
-npx skills add vercel-labs/agent-skills
-```
-
-3. Link the project:
-
-```sh
-vercel link
-```
+2. Set environment variables in Render or local `.env`.
 
 ## Development
 
 ```sh
-vercel dev
+npm run dev
 ```
 
-## Deploy
+## Deploy on Render
+
+Use these settings in a Render Web Service:
 
 ```sh
-vercel --prod
+Build Command: npm install
+Start Command: npm start
 ```
 
 ## API
 
-GET /api/hello
-- Fetches https://api.vercel.app/products and returns JSON.
-- Source: api/hello.ts
+GET /health
+- Returns `{ "ok": true }`
 
 POST /api/execute
-- Body: {"command":"..."}
+- Body: `{"command":"..."}`
 - Tries OpenRouter first, then Vercel AI SDK.
 - Env vars:
-	- OPENROUTER_API_KEY
-	- OPENROUTER_FREE_MODELS (comma-separated)
-	- AI_GATEWAY_API_KEY (or VERCEL_AI_API_KEY fallback)
-	- VERCEL_AI_MODELS (comma-separated)
-	- VERCEL_AI_DISCOVER_MODELS=true (optional, uses gateway.getAvailableModels)
-	- SYSTEM_VIBE
+	- `OPENROUTER_API_KEY`
+	- `OPENROUTER_FREE_MODELS` (comma-separated)
+	- `AI_GATEWAY_API_KEY` (or `VERCEL_AI_API_KEY` fallback)
+	- `VERCEL_AI_MODELS` (comma-separated)
+	- `VERCEL_AI_DISCOVER_MODELS=true` (optional, uses `gateway.getAvailableModels`)
+	- `SYSTEM_VIBE`

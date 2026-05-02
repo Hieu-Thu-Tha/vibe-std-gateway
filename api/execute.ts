@@ -1,5 +1,4 @@
-import { infer as inferOpenRouter } from "../lib/openrouter";
-import { infer as inferVercelAi } from "../lib/vercel-ai";
+import { executeCommand } from "../lib/execute-command";
 
 export const config = {
   runtime: "nodejs",
@@ -24,28 +23,12 @@ export default async function handler(request: any): Promise<Response> {
     return Response.json({ error: "No command provided" }, { status: 400 });
   }
 
-  let result: string | undefined;
-  let lastError: unknown;
-
   try {
-    result = await inferOpenRouter(command);
+    const result = await executeCommand(command);
+    return Response.json({ result });
   } catch (error) {
-    lastError = error;
-    console.error("OpenRouter failed", error);
-  }
-
-  if (!result) {
-    try {
-      result = await inferVercelAi(command);
-    } catch (error) {
-      lastError = error;
-      console.error("Vercel AI SDK failed", error);
-    }
-  }
-
-  if (!result) {
     const message =
-      lastError instanceof Error ? lastError.message : "Unknown error";
+      error instanceof Error ? error.message : "Unknown error";
     return Response.json(
       {
         error: "No response from computing model",
@@ -54,11 +37,4 @@ export default async function handler(request: any): Promise<Response> {
       { status: 500 },
     );
   }
-
-  const response = Response.json({ result });
-
-  // Unref all lingering timers/sockets so event loop can drain
-  if (global.gc) global.gc();
-
-  return response;
 }

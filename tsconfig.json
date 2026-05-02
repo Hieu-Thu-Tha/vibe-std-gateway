@@ -9,5 +9,13 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["api/**/*.ts", "lib/openrouter.ts"]
+  "include": [
+    "server.ts",
+    "api/**/*.ts",
+    "lib/openrouter.ts",
+    "lib/vercel-ai.ts",
+    "lib/model-analytics.ts",
+    "lib/redis.ts",
+    "lib/utils.ts"
+  ]
 }
